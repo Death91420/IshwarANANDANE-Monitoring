@@ -54,16 +54,22 @@ jobs:
       - name: Build image Docker
         run: docker build -t nodeapp:scan .
 
-      - name: Scan Trivy (Vulnerabilities only)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: nodeapp:scan
-          format: table
-          #severity: CRITICAL,HIGH
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-
+    #   - name: Scan Trivy (Vulnerabilities only)
+    #     uses: aquasecurity/trivy-action@0.28.0
+    #     with:
+    #       image-ref: nodeapp:scan
+    #       format: table
+    #       severity: CRITICAL,HIGH
+    #       exit-code: '1'
+    #       ignore-unfixed: true
+    #       vuln-type: 'os,library'
+    - name: Run Trivy vulnerability scanner
+    uses: aquasecurity/trivy-action@master
+    with:
+        input: /tmp/image.tar
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH,MEDIUM'
   # ── Job 4 : Analyse CodeQL
   codeql:
     name: Analyse CodeQL
